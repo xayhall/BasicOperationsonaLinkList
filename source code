@@ -1,0 +1,187 @@
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <string>
+using namespace std;
+
+struct AirQuality
+{
+	string uniqueId;
+	string indicatorId;
+	string name;
+	string measure;
+	string measureInfo;
+	string geoTypeName;
+	string geoJoinId;
+	string geoPlaceName;
+	string timePeriod;
+	string startDate;
+	string dataValue;
+	AirQuality *link;
+};
+
+
+static AirQuality *headMain; //pointer that allows access to the head outside of the function
+
+
+void InitializeList()
+{
+	
+	AirQuality *head = nullptr;
+	AirQuality *current = nullptr;
+	AirQuality *newNode = nullptr;
+	
+	fstream file("BasicOperationsofaLinkList.txt");//opens the input file
+	
+	if (file.is_open())
+	{
+		while(file.good())
+		{
+			newNode = new AirQuality;
+			getline(file, newNode->uniqueId);
+			getline(file, newNode->indicatorId);
+			getline(file, newNode->name);
+			getline(file, newNode->measure);
+			getline(file, newNode->measureInfo);
+			getline(file, newNode->geoTypeName);
+			getline(file, newNode->geoJoinId);
+			getline(file, newNode->geoPlaceName);
+			getline(file, newNode->timePeriod);
+			getline(file, newNode->startDate);
+			getline(file, newNode->dataValue);
+			newNode->link = nullptr;
+			
+			if (head == nullptr)
+			{
+				head = newNode;
+			}
+			else
+			{
+				current = head;
+				while(current->link != nullptr)
+				{
+					current = current->link;
+				}
+				current->link = newNode;
+			}
+	
+		}
+		file.close();
+	}
+	else 
+		{
+		cout << "An error has occured";
+		}
+		
+		
+	
+	headMain = head; //passing the head pointer to the global pointer
+	
+	cout << "The list has been initialized." << endl;
+	
+	
+}
+
+void DetermineIfListEmpty(AirQuality *head)
+{
+	if(head == nullptr)
+	{
+		cout << "The list is empty." << endl;
+	}
+	else if(head != nullptr)
+	{
+		cout << "The list contains items." << endl;
+	}
+	
+}
+
+void PrintList(AirQuality *head)
+{
+	
+	AirQuality *current = nullptr;
+	current = head;
+	
+	if (current == nullptr)
+	{
+		cout << "No items in list to print." << endl;
+	}
+	
+	while(current != nullptr)
+	{
+		if(current->uniqueId != "")
+		{
+			cout << "Unique Id: " << current->uniqueId << endl;
+			cout << "Indicator Id: " << current->indicatorId << endl;
+			cout << "Name: " << current->name << endl;
+			cout << "Measure: " << current->measure << endl;
+			cout << "Measure Info: " << current->measureInfo << endl;
+			cout << "Geo Type Name: " << current->geoTypeName << endl;
+			cout << "Geo Join Id: " << current->geoJoinId << endl;
+			cout << "Geo Place Name: " << current->geoPlaceName << endl;
+			cout << "Time Period: " << current->timePeriod << endl;
+			cout << "Start Date: " << current->startDate << endl;
+			cout << "Data Value: " << current->dataValue << endl;
+			current = current->link;
+			cout << endl;
+		}
+		else
+		{
+			break;
+		}
+	}
+	
+}
+
+void FindLength(AirQuality *head)
+{
+	AirQuality *current;
+	
+	current = head;
+	
+	int length = 0; //variable to keep track of items in the list.
+	
+	while(current != nullptr)
+	{
+		if(current->uniqueId != "")
+		{
+			length++;
+			current = current->link;	
+		}
+		else
+		{
+			break;
+		}
+	}
+	
+	cout << "The length of the list is " << length << "." << endl;
+	
+}
+
+void DestroyList(AirQuality *head)
+{
+	AirQuality *current = nullptr;
+	AirQuality *next = nullptr;
+	
+	current = head;
+	
+	next = current->link;
+	current->link = next->link;	
+	delete next;
+	
+	
+	
+}
+
+
+
+int main()
+{
+	InitializeList();
+	//DetermineIfListEmpty(headMain);
+	//PrintList(headMain);
+	//FindLength(headMain);
+	DestroyList(headMain);
+	PrintList(headMain);
+	
+	return 0;
+}
