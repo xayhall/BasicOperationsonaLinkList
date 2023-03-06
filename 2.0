@@ -1,0 +1,361 @@
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <string>
+using namespace std;
+
+struct AirQuality
+{
+	string uniqueId;
+	string indicatorId;
+	string name;
+	string measure;
+	string measureInfo;
+	string geoTypeName;
+	string geoJoinId;
+	string geoPlaceName;
+	string timePeriod;
+	string startDate;
+	string dataValue;
+	AirQuality *link;
+};
+
+static AirQuality *head = nullptr;
+static AirQuality *last = nullptr;
+static int count = 0;
+
+
+void DestroyList()
+{
+	AirQuality *temp;
+	AirQuality *current;
+	
+	current = head;
+	
+	while(current != nullptr)
+	{
+		temp = current;
+		current = current->link;
+		delete temp;
+	}
+	;
+	head = nullptr;
+	last = nullptr;
+	count = 0;
+}
+
+void DeleteLastItem()
+{
+	//empty list
+	if (head == nullptr)
+	{
+		cout << "Error, not elements in list!" << endl;
+		
+	}
+	//one element in list
+	else if (head->link == nullptr)
+	{
+		delete head;
+		head = nullptr;
+	}
+	//two or more elements
+	else
+	{
+		AirQuality *current = head;
+		AirQuality *prev = nullptr;
+		
+		while (current->link != nullptr)
+		{
+			prev = current;
+			current = current->link;
+		}
+		prev->link = nullptr;
+		delete current;
+		last = prev;
+	}
+	
+	count--;
+	
+}
+
+void DeleteItem(string searchItem)
+{
+	AirQuality *current = head;
+	AirQuality *prev = nullptr;
+	bool found = false;
+	
+	while (current != nullptr && !found)
+	{
+		if (current->uniqueId == searchItem)
+		{
+			found = true;
+		}
+		else
+		{
+			prev = current;
+			current = current->link;
+		}
+	}
+	
+	if (found == true)
+		{
+			
+			if(head->link == nullptr)
+				{
+					delete head;
+					head = nullptr;
+				}
+			
+			
+			else if (current == head)
+				{
+					head = current->link;
+					delete current;
+		
+				}
+			else if (current == last)
+				{
+					prev->link = nullptr;
+					delete current;
+					last = prev;
+				}
+			else
+				{
+					prev->link = current->link;
+					delete current;
+				}
+				
+			count--;		
+		}
+	else
+		{
+			cout << "Item not found!" << endl;
+		}
+}
+
+void InitializeList()
+{
+	
+	AirQuality *newNode = nullptr;
+	AirQuality *current = nullptr;
+	
+	fstream file("BasicOperationsofaLinkList.txt");//opens the input file
+	
+	if (file.is_open())
+	{
+		while(file.good())
+		{
+			newNode = new AirQuality;
+			getline(file, newNode->uniqueId);
+			getline(file, newNode->indicatorId);
+			getline(file, newNode->name);
+			getline(file, newNode->measure);
+			getline(file, newNode->measureInfo);
+			getline(file, newNode->geoTypeName);
+			getline(file, newNode->geoJoinId);
+			getline(file, newNode->geoPlaceName);
+			getline(file, newNode->timePeriod);
+			getline(file, newNode->startDate);
+			getline(file, newNode->dataValue);
+			count++;
+			newNode->link = nullptr;
+			
+			if (head == nullptr)
+			{
+				head = newNode;
+			}
+			else
+			{
+				current = head;
+				while(current->link != nullptr)
+				{
+					current = current->link;
+				}
+				current->link = newNode;
+			}
+			
+			last = newNode;
+		}
+		file.close();
+	}
+	else 
+		{
+		cout << "An error has occured";
+		}
+		
+	DeleteLastItem();
+}
+
+
+void PrintList()
+{
+	AirQuality *current = head;
+	
+	while(current != nullptr)
+	{
+		cout << "Unique Id: " << current->uniqueId << endl;
+		cout << "Indicator Id: " << current->indicatorId << endl;
+		cout << "Name: " << current->name << endl;
+		cout << "Measure: " << current->measure << endl;
+		cout << "Measure Info: " << current->measureInfo << endl;
+		cout << "Geo Type Name: " << current->geoTypeName << endl;
+		cout << "Geo Join Id: " << current->geoJoinId << endl;
+		cout << "Geo Place Name: " << current->geoPlaceName << endl;
+		cout << "Time Period: " << current->timePeriod << endl;
+		cout << "Start Date: " << current->startDate << endl;
+		cout << "Data Value: " << current->dataValue << endl;
+		current = current->link;
+		
+	}
+	cout<< endl;
+}
+
+void GetFirstItem()
+{
+	AirQuality *current = head;
+	
+	if (current == nullptr)
+	{
+		cout << "Error, the list is empty!" << endl;
+	}
+	else
+	{
+		cout << "Unique Id: " << current->uniqueId << endl;
+		cout << "Indicator Id: " << current->indicatorId << endl;
+		cout << "Name: " << current->name << endl;
+		cout << "Measure: " << current->measure << endl;
+		cout << "Measure Info: " << current->measureInfo << endl;
+		cout << "Geo Type Name: " << current->geoTypeName << endl;
+		cout << "Geo Join Id: " << current->geoJoinId << endl;
+		cout << "Geo Place Name: " << current->geoPlaceName << endl;
+		cout << "Time Period: " << current->timePeriod << endl;
+		cout << "Start Date: " << current->startDate << endl;
+		cout << "Data Value: " << current->dataValue << endl;
+	}
+}
+
+void GetLastItem()
+{
+	AirQuality *current = last;
+	
+	if (current == nullptr)
+	{
+		cout << "Error, the list is empty!" << endl;
+	}
+	else
+	{	
+		cout << "Unique Id: " << current->uniqueId << endl;
+		cout << "Indicator Id: " << current->indicatorId << endl;
+		cout << "Name: " << current->name << endl;
+		cout << "Measure: " << current->measure << endl;
+		cout << "Measure Info: " << current->measureInfo << endl;
+		cout << "Geo Type Name: " << current->geoTypeName << endl;
+		cout << "Geo Join Id: " << current->geoJoinId << endl;
+		cout << "Geo Place Name: " << current->geoPlaceName << endl;
+		cout << "Time Period: " << current->timePeriod << endl;
+		cout << "Start Date: " << current->startDate << endl;
+		cout << "Data Value: " << current->dataValue << endl;
+	}
+}
+
+void InsertItem(string uId, string iId, string name, string mea, string meaInfo, string gtn, string gji, string gpn, string tp, string sd, string dv)
+{
+		if (head == nullptr)
+		{
+			cout << "The list needs to be initialized before adding items to it."<< endl;
+		}
+		else
+		{
+			
+		AirQuality *newNode = nullptr;
+		
+		newNode = new AirQuality;
+		newNode->uniqueId = uId;
+		newNode->indicatorId = iId;
+		newNode->name = name;
+		newNode->measure = mea;
+		newNode->measureInfo = meaInfo;
+		newNode->geoTypeName = gtn;
+		newNode->geoJoinId = gji;
+		newNode->geoPlaceName = gpn;
+		newNode->timePeriod = tp;
+		newNode->startDate = sd;
+		newNode->dataValue = dv;
+		count++;
+		newNode->link = nullptr;
+		
+		last->link = newNode;
+		last = newNode;
+		}
+}
+
+void SearchForItem(string searchItem)
+{
+	AirQuality *current = head;
+	bool found = false;
+	
+	while (current != nullptr && !found)
+	{
+		if (current->uniqueId == searchItem)
+		{
+			found = true;
+		}
+		else
+		{
+			current = current->link;
+		}
+	}
+	
+	if (found == true)
+		{
+			cout << "Unique Id: " << current->uniqueId << endl;
+			cout << "Indicator Id: " << current->indicatorId << endl;
+			cout << "Name: " << current->name << endl;
+			cout << "Measure: " << current->measure << endl;
+			cout << "Measure Info: " << current->measureInfo << endl;
+			cout << "Geo Type Name: " << current->geoTypeName << endl;
+			cout << "Geo Join Id: " << current->geoJoinId << endl;
+			cout << "Geo Place Name: " << current->geoPlaceName << endl;
+			cout << "Time Period: " << current->timePeriod << endl;
+			cout << "Start Date: " << current->startDate << endl;
+			cout << "Data Value: " << current->dataValue << endl;	
+		}
+		else
+		{
+			cout << "Item not found!" << endl;
+		}
+}
+
+
+int Length()
+{
+	
+	return count;
+}
+
+bool IsEmpty()
+{
+	return (head == nullptr);
+}
+
+
+
+int main()
+{
+	//cout << Length() << endl;
+	InitializeList();
+	InsertItem("1","1","1","1","1","1","1","1","1","1","1");
+	cout << Length() << endl;
+	DeleteItem("216499");
+	cout << Length() << endl;
+	GetLastItem();
+	GetFirstItem();
+	//DeleteLastItem();
+	//GetLastItem();
+	//cout << Length() << endl;
+	
+	
+	
+	
+	return 0;
+}
